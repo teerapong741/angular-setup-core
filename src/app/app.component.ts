@@ -6,5 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'awa-angular-setup';
+  title = 'awa-angular-base-project';
 }

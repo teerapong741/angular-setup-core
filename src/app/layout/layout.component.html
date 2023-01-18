@@ -1,0 +1,6 @@
+<ng-container *ngIf="layout$ | async as layout">
+  <app-empty-layout *ngIf="layout === LayoutType.EMPTY"></app-empty-layout>
+
+  <!-- Vertical -->
+  <app-modern *ngIf="layout === LayoutType.ADMIN"></app-modern>
+</ng-container>

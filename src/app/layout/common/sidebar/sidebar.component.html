@@ -1,0 +1,120 @@
+<aside
+  class="sidebar h-full overflow-auto w-72 md:shadow transform -translate-x-full md:translate-x-0 transition-transform duration-150 ease-in">
+  <!-- Header -->
+  <div class="sidebar-header flex items-center justify-between py-4 px-6">
+    <img
+      src="./../../../../assets/icons/logo.svg"
+      class="w-[84px] h-[16px] cursor-pointer"
+      alt="ศาลานา"
+      (click)="goToMainWeb$.next()" />
+    <hero-icon name="user-circle" type="solid" class="text-white h-[20px] w-[20px] cursor-pointer"></hero-icon>
+  </div>
+
+  <!-- Profile -->
+  <div class="sidebar-profile flex flex-col items-center justify-center py-6">
+    <img
+      [src]="user?.img_profile || './../../../../assets/images/user_profile.jpg'"
+      alt="รูปโปรไฟล์"
+      class="rounded-full w-[106px] h-[106px]" />
+    <p class="text-[16px] font-[400] text-white mt-[16px]">{{ user?.name || 'ไม่ได้ระบุ' }}</p>
+    <ng-container [ngSwitch]="user?.role">
+      <ng-container *ngSwitchCase="'ADMIN'">
+        <p class="text-[16px] font-[400] text-white">ตำแหน่ง เจ้าหน้ที่ ADMIN</p>
+      </ng-container>
+      <ng-container *ngSwitchCase="'MANAGEMENT'">
+        <p class="text-[16px] font-[400] text-white">ตำแหน่ง เจ้าหน้ที่ MANAGEMENT</p>
+      </ng-container>
+      <ng-container *ngSwitchCase="'DCC'">
+        <p class="text-[16px] font-[400] text-white">ตำแหน่ง เจ้าหน้ที่ DCC</p>
+      </ng-container>
+      <ng-container *ngSwitchDefault>
+        <p class="text-[16px] font-[400] text-white">ตำแหน่ง ไม่ได้ระบุ</p>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <!-- Content -->
+  <ng-container *ngIf="navigationItems.length > 0">
+    <div class="sidebar-content px-6 py-">
+      <ul class="flex flex-col w-full">
+        <ng-container *ngFor="let item of navigationItems; trackBy: trackByIdentity">
+          <ng-container [ngSwitch]="item.type">
+            <ng-container *ngSwitchCase="'aside'">
+              <ng-container *ngTemplateOutlet="aside; context: { item, isActive: false }"></ng-container>
+            </ng-container>
+            <ng-container *ngSwitchCase="'basic'">
+              <ng-container *ngTemplateOutlet="basic; context: { item, isActive: false }"></ng-container>
+            </ng-container>
+            <!-- <ng-container *ngSwitchCase="'collapsable'">
+              <ng-container *ngTemplateOutlet="collapsable; context: { item, isActive: false }"></ng-container>
+            </ng-container> -->
+            <!-- <ng-container *ngSwitchCase="'divider'">
+              <ng-container *ngTemplateOutlet="divider; context: { item, isActive: false }"></ng-container>
+            </ng-container> -->
+            <ng-container *ngSwitchCase="'group'">
+              <ng-container *ngTemplateOutlet="group; context: { item, isActive: false }"></ng-container>
+            </ng-container>
+            <!-- <ng-container *ngSwitchCase="'spacer'">
+              <ng-container *ngTemplateOutlet="spacer; context: { item, isActive: false }"></ng-container>
+            </ng-container> -->
+          </ng-container>
+        </ng-container>
+      </ul>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="loading">
+    <div class="w-full h-auto flex justify-center items-center">
+      <app-loading-ellipsis></app-loading-ellipsis>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="error">
+    <div class="w-full h-auto flex flex-col justify-center items-center">
+      <button class="button button-yellow" (click)="reloadNavigationItems$.next()">โหลดเมนูอีกครั้ง</button>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="navigationItems.length < 1 && !loading && !error">
+    <div class="w-full h-auto flex justify-center items-center">
+      <span>no Data</span>
+    </div>
+  </ng-container>
+</aside>
+
+<ng-template #aside let-item="item">
+  <li class="my-px mb-4">
+    <a class="flex flex-col items-start justify-center h-10 rounded-lg">
+      <span class="ml-3" style="font-weight: 400; font-size: 16px; color: #ffffff">{{ item.title }}</span>
+      <span class="ml-3 -mt-[5px]" style="font-weight: 400; font-size: 14px; color: #c7c7c7">{{ item.sub_title }}</span>
+    </a>
+  </li>
+</ng-template>
+
+<ng-template #basic let-item="item" let-isActive="isActive">
+  <li class="my-1">
+    <a class="flex flex-row items-center h-10 px-3 rounded-lg menu" [routerLink]="item.link" routerLinkActive="active">
+      <span class="flex items-center justify-center text-lg text-green-400">
+        <hero-icon [name]="item.icon" class="text-white h-[20px] w-[20px] cursor-pointer" type="outline"></hero-icon>
+      </span>
+      <span class="ml-3">{{ item.title }}</span>
+    </a>
+  </li>
+</ng-template>
+
+<!-- <ng-template #collapsable let-item="item" let-isActive="isActive"></ng-template> -->
+
+<!-- <ng-template #divider let-item="item" let-isActive="isActive"></ng-template> -->
+
+<ng-template #group let-item="item" let-isActive="isActive">
+  <li class="my-1">
+    <a class="flex flex-row items-center h-10 px-3 rounded-lg menu" [routerLink]="item.link" routerLinkActive="active">
+      <span class="flex items-center justify-center text-lg text-green-400">
+        <hero-icon [name]="item.icon" class="text-white h-[20px] w-[20px] cursor-pointer" type="outline"></hero-icon>
+      </span>
+      <span class="ml-3">{{ item.title }}</span>
+      <span class="flex items-center justify-center text-xs text-red-500 font-semibold bg-red-100 h-6 px-2 rounded-full ml-auto">
+        <hero-icon [name]="item.icon" class="text-white h-[20px] w-[20px] cursor-pointer" type="outline"></hero-icon>
+      </span>
+    </a>
+  </li>
+</ng-template>
+
+<!-- <ng-template #spacer let-item="item" let-isActive="isActive"></ng-template> -->
